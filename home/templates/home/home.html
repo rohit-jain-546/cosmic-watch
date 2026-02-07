@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CosmicWatch Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0b0f2b, #000);
+  color: white;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: rgba(0,0,30,0.8);
+}
+
+nav a {
+  color: #7df9ff;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.title {
+  text-align: center;
+  margin: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: #111633;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.2);
+}
+
+.card h2 {
+  color: #7df9ff;
+}
+
+.low { color: #00ff88; }
+.medium { color: #ffcc00; }
+.high { color: #ff4444; }
+
+button {
+  background: #7df9ff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+/* ================= SUMMARY PANEL ================= */
+
+.summary-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.summary-card {
+  background: var(--color-card-bg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(125, 249, 255, 0.15);
+}
+
+.summary-card h3 {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.summary-card.high h3 { color: var(--color-risk-high); }
+.summary-card.medium h3 { color: var(--color-risk-medium); }
+.summary-card.low h3 { color: var(--color-risk-low); }
+
+/* ================= CARD ACTIONS ================= */
+
+.card button {
+  width: 100%;
+  margin-top: var(--spacing-sm);
+}
+
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>🌌 CosmicWatch</h2>
+    <a href="watchlist.html">Watchlist</a>
+    <a href="login.html">Login</a>
+  </nav>
+
+  <h1 class="title">Near-Earth Asteroid Monitor</h1>
+  <div id="asteroid-container" class="grid"></div>
+  <main>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>Near-Earth Asteroid Monitor</h1>
+    <p class="subtitle">
+      Live NASA asteroid tracking with intelligent risk analysis
+    </p>
+  </header>
+
+  <!-- Summary Dashboard -->
+  <section class="summary-panel">
+    <div class="summary-card high">
+      <h3 id="high-count">0</h3>
+      <p>High Risk</p>
+    </div>
+
+    <div class="summary-card medium">
+      <h3 id="medium-count">0</h3>
+      <p>Moderate</p>
+    </div>
+
+    <div class="summary-card low">
+      <h3 id="low-count">0</h3>
+      <p>Low Risk</p>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Fetching live asteroid telemetry…</p>
+  </div>
+
+  <!-- Asteroid Grid -->
+  <section id="asteroid-container" class="grid"></section>
+
+  <!-- Empty -->
+  <div id="empty-state" class="empty-state">
+    No asteroid data available.
+  </div>
+
+</main>
+
+
+  <script src="js/main.js"></script>
+</body>
+</html>
