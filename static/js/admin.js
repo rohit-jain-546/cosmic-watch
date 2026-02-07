@@ -193,6 +193,11 @@ function initializeDashboard() {
     // Inject advanced controls
     injectAdvancedControls();
     injectModalTemplates();
+    // Admin uses researcher_watchlist (main uses cw_watchlist)
+    try {
+        const raw = localStorage.getItem('researcher_watchlist');
+        if (raw) watchlist = JSON.parse(raw);
+    } catch (e) {}
     renderWatchlist();
     renderAlerts();
 }
@@ -605,7 +610,7 @@ function renderAsteroidFeed(asteroids) {
                 <button type="button" class="view-details-btn" data-id="${a.id}" onclick="typeof openAsteroidProfile==='function'&&openAsteroidProfile(this.dataset.id)" style="font-size: 12px; padding: 6px; cursor: pointer; background: #00c3ff; border: none; color: #000;">
                     🔬 Details
                 </button>
-                <button type="button" class="add-watchlist-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px; background: ${(watchlist||[]).some(wid=>wid==a.id) ? '#666' : 'cyan'}; cursor: pointer; border: none; color: #000;">
+                <button type="button" class="add-watchlist-btn" data-id="${a.id}" onclick="typeof addToWatchlist==='function'&&addToWatchlist(this.dataset.id)" style="font-size: 12px; padding: 6px; background: ${(watchlist||[]).some(wid=>wid==a.id) ? '#666' : 'cyan'}; cursor: pointer; border: none; color: #000;">
                     ${(watchlist||[]).some(wid=>wid==a.id) ? '⭐' : '☆'}
                 </button>
                 <button type="button" class="compare-btn" data-id="${a.id}" onclick="typeof toggleCompareSelection==='function'&&toggleCompareSelection(this.dataset.id)" style="font-size: 12px; padding: 6px; background: ${compareSelection.some(cid=>cid==a.id)?'#00ff88':'#ff8800'}; cursor: pointer; border: none; color: ${compareSelection.some(cid=>cid==a.id)?'#000':'white'};">
@@ -1133,7 +1138,7 @@ function renderWatchlist() {
             <li style="margin-bottom: 8px; font-size: 13px;">
                 <strong>${asteroid.designation}</strong><br>
                 <span style="color: #888;">Risk: ${asteroid.riskScore} | ${asteroid.closeApproachDateShort}</span><br>
-                <button class="remove-watchlist" data-id="${id}" style="font-size: 11px; padding: 4px 8px; margin-top: 4px; background: #ff4444;">
+                <button class="remove-watchlist" data-id="${id}" onclick="typeof removeFromWatchlist==='function'&&removeFromWatchlist(this.dataset.id)" style="font-size: 11px; padding: 4px 8px; margin-top: 4px; background: #ff4444;">
                     Remove
                 </button>
             </li>
@@ -1266,6 +1271,8 @@ function closeModal(modalId) {
 window.closeModal = closeModal;
 window.openAsteroidProfile = openAsteroidProfile;
 window.toggleCompareSelection = toggleCompareSelection;
+window.addToWatchlist = addToWatchlist;
+window.removeFromWatchlist = removeFromWatchlist;
 
 // ========================
 // CHART.JS CDN LOADER
