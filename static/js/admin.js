@@ -88,9 +88,17 @@ document.getElementById('add-note-btn')?.addEventListener('click', async () => {
 // Shared globals (admin dashboard uses `allAsteroids` and Chart instances)
 let allAsteroids = [];
 let sizeChart, velocityChart, yearChart, riskChart;
+let researchNotes = {};
+try {
+  const stored = localStorage.getItem('research_notes');
+  if (stored) researchNotes = JSON.parse(stored);
+} catch (e) {}
 
-// Watchlist is managed globally in `main.js` using the `watchlist` array and helpers
-// We provide a small delegate so admin UI can call the same functions if available.
+// Ensure watchlist exists (defined in main.js but provide fallback)
+if (typeof watchlist === 'undefined') {
+  let watchlist = [];
+}
+
 function loadWatchlistFromStorage() {
   if (typeof window.loadWatchlistFromStorage === 'function') return window.loadWatchlistFromStorage();
   // fallback: noop
@@ -203,7 +211,6 @@ function setupEventListeners() {
         // view details
         if (btn.classList.contains('view-details-btn')) {
             const id = btn.dataset.id;
-            console.log('Details clicked for ID:', id);
             openAsteroidProfile(id);
             return;
         }
@@ -599,21 +606,18 @@ function renderAsteroidFeed(asteroids) {
             </div>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
-                <button class="view-details-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px;">
+                <button type="button" class="view-details-btn" data-id="${a.id}" onclick="typeof openAsteroidProfile==='function'&&openAsteroidProfile(this.dataset.id)" style="font-size: 12px; padding: 6px; cursor: pointer; background: #00c3ff; border: none; color: #000;">
                     🔬 Details
                 </button>
-                <button class="add-watchlist-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px; background: ${watchlist.includes(a.id) ? '#666' : 'cyan'};">
+                <button type="button" class="add-watchlist-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px; background: ${watchlist.includes(a.id) ? '#666' : 'cyan'}; cursor: pointer; border: none; color: #000;">
                     ${watchlist.includes(a.id) ? '⭐' : '☆'}
                 </button>
-                <button class="compare-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px; background: #ff8800;">
+                <button type="button" class="compare-btn" data-id="${a.id}" style="font-size: 12px; padding: 6px; background: #ff8800; cursor: pointer; border: none; color: white;">
                     ⚖️
                 </button>
             </div>
         </div>
     `).join('');
-    
-    // Re-attach event listeners after rendering new cards
-    if (listenersAttached) setupEventListeners(); // Will be no-op since flag is true
 }
 
 function updateSummaryStats(filtered = allAsteroids) {
@@ -630,7 +634,7 @@ function updateSummaryStats(filtered = allAsteroids) {
 // DETAILED PROFILE
 // ========================
 async function openAsteroidProfile(id) {
-    const asteroid = allAsteroids.find(a => a.id === id);
+    const asteroid = allAsteroids.find(a => a.id == id); // loose eq: dataset.id is string, a.id is number
     if (!asteroid) return;
     
     showLoading(true);
@@ -639,6 +643,9 @@ async function openAsteroidProfile(id) {
         // Fetch full details from NASA API
         const response = await fetch(`${LOOKUP_URL}/${id}?api_key=${API_KEY}`);
         const fullData = await response.json();
+        if (!response.ok || fullData.error) {
+            throw new Error(fullData.error?.message || `API error: ${response.status}`);
+        }
         
         const content = `
             <h2 style="margin-top: 0;">${fullData.name}</h2>
@@ -1255,6 +1262,7 @@ function closeModal(modalId) {
 }
 
 window.closeModal = closeModal;
+window.openAsteroidProfile = openAsteroidProfile;
 
 // ========================
 // CHART.JS CDN LOADER

@@ -15,6 +15,11 @@ let watchlist = [];
 
 // --- Initialization ---
 function init() {
+    // Skip on admin page (uses admin.js; main page needs #loading and #asteroid-container)
+    const container = document.getElementById('asteroid-container');
+    const loading = document.getElementById('loading');
+    if (!container || !loading) return;
+
     // initialize date inputs with today
     const todayStr = new Date().toISOString().split('T')[0];
     const sd = document.getElementById('start-date');
