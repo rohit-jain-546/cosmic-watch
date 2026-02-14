@@ -277,3 +277,8 @@ Before pushing to production:
 
 ## License
 Add a `LICENSE` file and set your preferred license (for example: MIT).
+
+## Author
+
+Rohit Jain  
+LinkedIn: https://www.linkedin.com/in/546-rohit-jain
