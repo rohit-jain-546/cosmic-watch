@@ -275,8 +275,7 @@ Before pushing to production:
 3. Commit with clear messages
 4. Open a pull request with testing notes
 
-## License
-Add a `LICENSE` file and set your preferred license (for example: MIT).
+
 
 ## Author
 
